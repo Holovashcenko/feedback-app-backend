@@ -1,0 +1,74 @@
+export const FEEDBACKS = [
+  {
+    name: 'Test 1',
+    email: 'test1@mail.com',
+    message: 'Message 1',
+  },
+  {
+    name: 'Test 2',
+    email: 'test2@mail.com',
+    message: 'Message 2',
+  },
+  {
+    name: 'Test 3',
+    email: 'test3@mail.com',
+    message: 'Message 3',
+  },
+];
+
+interface IFeedback {
+    readonly feedback_id?: number;
+    readonly name: string;
+    readonly email: string;
+    readonly message: string;
+  }
+  
+  export class FeedbackDto implements IFeedback {
+    name: string;
+    email: string;
+    message: string;
+  }
+
+  import { Injectable } from '@nestjs/common';
+import { FeedbackDto } from './types.dto';
+import { FEEDBACKS } from './feedback.mock';
+
+@Injectable()
+export class AppService {
+  private feedbacks = FEEDBACKS;
+
+  postFeedback(feedback: FeedbackDto): FeedbackDto {
+    const feedbackItem: FeedbackDto = {
+      ...feedback,
+    };
+    this.feedbacks.push(feedbackItem);
+    return feedbackItem;
+  }
+}
+
+
+import { Controller, Post, Body } from '@nestjs/common';
+import { AppService } from './app.service';
+import { FeedbackDto } from './types.dto';
+
+@Controller('api/')
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Post('feedbacks')
+  public postFeedback(@Body() feedback: FeedbackDto): FeedbackDto {
+    return this.appService.postFeedback(feedback);
+  }
+}
+
+
+TypeOrmModule.forRoot({
+    type: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'postgres',
+    password: '28081988',
+    database: 'zenbit',
+    entities: [],
+    synchronize: true,
+  }),
